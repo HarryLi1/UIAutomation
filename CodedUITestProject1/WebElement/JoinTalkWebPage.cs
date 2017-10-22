@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CodedUITestProject1.WebElement2
+namespace CodedUITestProject1.WebElement
 {
-    public class MyBrowserWindow : BrowserWindow
+    public class JoinTalkWebPage : BrowserWindow
     {
-        public MyBrowserWindow()
+        public JoinTalkWebPage()
         {
             this.SearchProperties[UITestControl.PropertyNames.ClassName] = "IEFrame";
         }
@@ -18,18 +18,18 @@ namespace CodedUITestProject1.WebElement2
             this.CopyFrom(BrowserWindow.Launch(url));
         }
 
-        public TestDocument TalkDocument
+        public JoinTalkWebDocument JoinTalkDoc
         {
             get
             {
-                if (this.talkDocument == null)
+                if (this.joinTalkDoc == null)
                 {
-                    this.talkDocument = new TestDocument(this);
+                    this.joinTalkDoc = new JoinTalkWebDocument(this);
                 }
 
-                return this.talkDocument;
+                return this.joinTalkDoc;
             }
         }
-        private TestDocument talkDocument;
+        private JoinTalkWebDocument joinTalkDoc;
     }
 }

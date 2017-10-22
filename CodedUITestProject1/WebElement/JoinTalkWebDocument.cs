@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CodedUITestProject1.WebElement2
+namespace CodedUITestProject1.WebElement
 {
-    public class TestDocument : HtmlDocument
+    public class JoinTalkWebDocument : HtmlDocument
     {
-        public TestDocument(UITestControl container)
+        public JoinTalkWebDocument(UITestControl container)
             : base(container)
         {
             this.FilterProperties[HtmlDocument.PropertyNames.AbsolutePath] = "/cgi-bin/dc/ft";

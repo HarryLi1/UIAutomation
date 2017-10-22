@@ -19,7 +19,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Selenium;
 using CodedUITestProject1.WebElement;
-using CodedUITestProject1.WebElement2;
 using CodedUITestProject1.DAO;
 using CodedUITestProject1.Entity;
 using System.Diagnostics;//引用Selenium
@@ -59,14 +58,14 @@ namespace CodedUITestProject1
             {
                 string oldLink = list[i].OldLink;
                 //使用默认浏览器（IE）打开指定地址
-                MyBrowserWindow myBW = new MyBrowserWindow();
-                myBW.LaunchUrl(new System.Uri("http://url.cn/51X5yCO"));
+                JoinTalkWebPage jtPage = new JoinTalkWebPage();
+                jtPage.LaunchUrl(new System.Uri(oldLink));
                 //点击“加入多人聊天”按钮
-                myBW.TalkDocument.BtnJoinTalk.WaitForControlExist();
-                Mouse.Click(myBW.TalkDocument.BtnJoinTalk);
+                jtPage.JoinTalkDoc.BtnJoinTalk.WaitForControlExist();
+                Mouse.Click(jtPage.JoinTalkDoc.BtnJoinTalk);
                 //关闭浏览器
-                myBW.Close();
-                myBW.WaitForControlNotExist();
+                jtPage.Close();
+                jtPage.WaitForControlNotExist();
 
                 //获取聊天对话框
                 QQTalkWindow window = new QQTalkWindow();

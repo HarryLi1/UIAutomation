@@ -39,7 +39,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.CodedUIExtension.VS12.v16.1, Version=16.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data">
       <HintPath>..\Framework\Mysql\MySql.Data.dll</HintPath>
@@ -72,17 +71,10 @@
     <Compile Include="Common\KeyboardKeys.cs" />
     <Compile Include="Service\DiscussGroupLinkService.cs" />
     <Compile Include="Entity\DiscussGroupLink.cs" />
-    <Compile Include="MysqlHelper.cs" />
+    <Compile Include="Service\MysqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Selenium\UnitTest1.cs" />
-    <Compile Include="WebElement2\MyBrowserWindow.cs" />
-    <Compile Include="WebElement2\TestDocument.cs" />
-    <Compile Include="WebElement\ChromeWindow.cs" />
-    <Compile Include="WebElement\HtmlContent.cs" />
-    <Compile Include="WebElement\NavigatorBar.cs" />
-    <Compile Include="WebElement\OpenQQButton.cs" />
-    <Compile Include="WebElement\TabGroup.cs" />
-    <Compile Include="WebElement\TabPage.cs" />
+    <Compile Include="WebElement\JoinTalkWebPage.cs" />
+    <Compile Include="WebElement\JoinTalkWebDocument.cs" />
     <Compile Include="WinElement\JoinTalkPopup\JoinTalkMenu.cs" />
     <Compile Include="WinElement\JoinTalkPopup\JoinTalkWindow.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkToolBar.cs" />
@@ -92,7 +84,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Sql\DiscussGroupLinkTable.sql" />
+    <None Include="Sql\DiscussGroupLinkTable.txt" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
