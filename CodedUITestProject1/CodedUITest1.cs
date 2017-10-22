@@ -19,7 +19,10 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Selenium;
 using CodedUITestProject1.WebElement;
-using CodedUITestProject1.WebElement2;//引用Selenium
+using CodedUITestProject1.WebElement2;
+using CodedUITestProject1.DAO;
+using CodedUITestProject1.Entity;
+using System.Diagnostics;//引用Selenium
 
 namespace CodedUITestProject1
 {
@@ -32,14 +35,29 @@ namespace CodedUITestProject1
     {
         public CodedUITest1()
         {
+           
+        }
+
+        [ClassInitialize()]
+        public static void init(TestContext context)
+        {
+            //判断QQ是否登录
+            var processes = Process.GetProcessesByName("QQ");
+            if (processes == null || processes.Length == 0)
+            {
+                Assert.Fail("未启动QQ，请先启动QQ");
+            }
         }
 
         [TestMethod]
         [Timeout(TestTimeout.Infinite)]
         public void CodedUITestMethod1()
         {
-            for (int i = 0; i < 10; i++)
+            DiscussGroupLinkService service = new DiscussGroupLinkService();
+            List<DiscussGroupLink> list = service.getUnprocessedData();
+            for (int i = 0; i < list.Count; i++)
             {
+                string oldLink = list[i].OldLink;
                 //使用默认浏览器（IE）打开指定地址
                 MyBrowserWindow myBW = new MyBrowserWindow();
                 myBW.LaunchUrl(new System.Uri("http://url.cn/51X5yCO"));
@@ -66,16 +84,17 @@ namespace CodedUITestProject1
                 Thread.Sleep(1000);
 
                 //从黏贴板中读取新邀请链接
-                string url;
-                string linkContent = Clipboard.GetText();
-                if (!string.IsNullOrWhiteSpace(linkContent) && linkContent.StartsWith("点击链接加入多人聊天"))
+                string newLink = Clipboard.GetText();
+                if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
                 {
-                    linkContent = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
+                    newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
                 }
-                //保存新Url,http://url.cn/5rUmF4D
 
                 //关闭讨论组标签
                 Keyboard.SendKeys(window, KeyboardKeys.ESC);
+
+                //保存新Url,http://url.cn/5rUmF4D
+                service.UpdateData(list[i].ID, newLink);
             }
 
         }
