@@ -13,7 +13,8 @@ namespace CodedUITestProject1
 
         public MysqlHelper()
         {
-            string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
+            //string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
+            string M_str_sqlcon = "server=localhost;user id=root;password=123456;database=test";
             mysqlcon = new MySqlConnection(M_str_sqlcon);
             mysqlcon.Open();
         }

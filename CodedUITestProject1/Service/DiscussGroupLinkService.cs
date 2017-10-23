@@ -9,8 +9,8 @@ namespace CodedUITestProject1.DAO
 {
     public class DiscussGroupLinkService
     {
-        public const string GetUnprocessedDataSql = "SELECT * FROM testdb.discussgrouplink where IsComputed = 0";
-        public const string UpdateNewLinkSql = "update testdb.discussgrouplink set NewLink = '{0}', IsComputed = 1 where id = {1}";
+        public const string GetUnprocessedDataSql = "SELECT * FROM discussgrouplink where IsComputed = 0";
+        public const string UpdateNewLinkSql = "update discussgrouplink set NewLink = '{0}', IsComputed = 1 where id = {1}";
 
         public List<DiscussGroupLink> getUnprocessedData()
         {

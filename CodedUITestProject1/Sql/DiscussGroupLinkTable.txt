@@ -1,0 +1,15 @@
+CREATE TABLE `discussgrouplink` (
+  `ID` bigint(10) NOT NULL AUTO_INCREMENT,
+  `OldLink` varchar(45) NOT NULL,
+  `NewLink` varchar(45) DEFAULT NULL,
+  `IsComputed` tinyint(1) NOT NULL,
+  `CreateTime` datetime NOT NULL,
+  `ChangeTime` datetime NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+//PC-Harry
+string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
+//DST60080
+string M_str_sqlcon = "server=localhost;user id=root;password=123456;database=test";
