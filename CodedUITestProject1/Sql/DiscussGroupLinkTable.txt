@@ -1,13 +1,34 @@
+CREATE TABLE `contactinfo` (
+  `ID` bigint(10) NOT NULL AUTO_INCREMENT,
+  `Key` bigint(10) NOT NULL,
+  `OldValue` varchar(500) NOT NULL,
+  `NewValue` varchar(500) DEFAULT NULL,
+  `CategoryID` int(11) NOT NULL DEFAULT '0',
+  `Status` varchar(2) NOT NULL DEFAULT 'W' COMMENT 'W:待处理；P：处理中；S：处理成功；F：处理失败',
+  `Message` varchar(45) DEFAULT NULL,
+  `CreateTime` datetime NOT NULL,
+  `ChangeTime` datetime NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 CREATE TABLE `discussgrouplink` (
   `ID` bigint(10) NOT NULL AUTO_INCREMENT,
+  `Key` bigint(10) NOT NULL,
   `OldLink` varchar(45) NOT NULL,
   `NewLink` varchar(45) DEFAULT NULL,
-  `IsComputed` tinyint(1) NOT NULL,
+  `LinkType` varchar(2) DEFAULT 'Z' COMMENT 'Z：讨论组；Q：QQ群',
+  `Status` varchar(2) DEFAULT 'W' COMMENT 'W:待处理；P：处理中；S：处理成功；F：处理失败',
+  `Message` varchar(500) DEFAULT NULL,
   `CreateTime` datetime NOT NULL,
   `ChangeTime` datetime NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
 
 //PC-Harry
 string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";

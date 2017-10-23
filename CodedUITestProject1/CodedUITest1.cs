@@ -21,7 +21,8 @@ using Selenium;
 using CodedUITestProject1.WebElement;
 using CodedUITestProject1.DAO;
 using CodedUITestProject1.Entity;
-using System.Diagnostics;//引用Selenium
+using System.Diagnostics;
+using CodedUITestProject1.Util;//引用Selenium
 
 namespace CodedUITestProject1
 {
@@ -34,7 +35,7 @@ namespace CodedUITestProject1
     {
         public CodedUITest1()
         {
-           
+
         }
 
         [ClassInitialize()]
@@ -50,7 +51,7 @@ namespace CodedUITestProject1
 
         [TestMethod]
         [Timeout(TestTimeout.Infinite)]
-        public void CodedUITestMethod1()
+        public void TC02_RetrieveNewLink()
         {
             DiscussGroupLinkService service = new DiscussGroupLinkService();
             List<DiscussGroupLink> list = service.getUnprocessedData();
@@ -93,8 +94,66 @@ namespace CodedUITestProject1
                 Keyboard.SendKeys(window, KeyboardKeys.ESC);
 
                 //保存新Url,http://url.cn/5rUmF4D
-                service.UpdateData(list[i].ID, newLink);
+                service.UpdateNewLink(list[i].ID, newLink);
             }
+
+        }
+
+        [TestMethod]
+        [Timeout(TestTimeout.Infinite)]
+        public void TC01_BreakDownLinks()
+        {
+            ContactInfoService contactInfoService = new ContactInfoService();
+            DiscussGroupLinkService linkService = new DiscussGroupLinkService();
+
+            List<ContactInfo> list = contactInfoService.getUnprocessedData();
+
+            foreach (var info in list)
+            {
+                List<string> links1 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQTaoLunZuPattern);
+
+                List<DiscussGroupLink> links = new List<DiscussGroupLink>();
+
+                links1.ForEach(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x)) return;
+
+                    DiscussGroupLink link = new DiscussGroupLink()
+                    {
+                        Key = info.Key,
+                        OldLink = x,
+                        LinkType = "Z",
+                        Status = EntityStatus.Waiting,
+                        NewLink = ""
+                    };
+
+                    links.Add(link);
+                });
+
+
+                List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
+                links2.ForEach(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x)) return;
+                    DiscussGroupLink link = new DiscussGroupLink()
+                    {
+                        Key = info.Key,
+                        OldLink = x,
+                        LinkType = "Z",
+                        Status = EntityStatus.Waiting,
+                        NewLink = ""
+                    };
+                    links.Add(link);
+                });
+
+                linkService.BulkInsert(links);
+            }
+        }
+
+        [TestMethod]
+        [Timeout(TestTimeout.Infinite)]
+        public void TC03_ReplaceWithNewLink()
+        {
 
         }
 

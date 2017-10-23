@@ -5,13 +5,13 @@ using System.Text;
 
 namespace CodedUITestProject1.Entity
 {
-    public class DiscussGroupLink
+    public class ContactInfo
     {
         public long ID;
         public long Key;
-        public string OldLink;
-        public string NewLink;
-        public string LinkType;
+        public string OldValue;
+        public string NewValue;
+        public int CategoryID;
         public string Status;
         public string Message;
         public DateTime CreateTime;

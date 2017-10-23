@@ -69,10 +69,14 @@
   <ItemGroup>
     <Compile Include="CodedUITest1.cs" />
     <Compile Include="Common\KeyboardKeys.cs" />
+    <Compile Include="Entity\ContactInfo.cs" />
+    <Compile Include="Entity\EntityStatus.cs" />
+    <Compile Include="Service\ContactInfoService.cs" />
     <Compile Include="Service\DiscussGroupLinkService.cs" />
     <Compile Include="Entity\DiscussGroupLink.cs" />
     <Compile Include="Service\MysqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\RegexUtil.cs" />
     <Compile Include="WebElement\JoinTalkWebPage.cs" />
     <Compile Include="WebElement\JoinTalkWebDocument.cs" />
     <Compile Include="WinElement\JoinTalkPopup\JoinTalkMenu.cs" />
