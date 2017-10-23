@@ -54,47 +54,66 @@ namespace CodedUITestProject1
         public void TC02_RetrieveNewLink()
         {
             DiscussGroupLinkService service = new DiscussGroupLinkService();
-            List<DiscussGroupLink> list = service.getUnprocessedData();
+            List<DiscussGroupLink> list = service.getByStatus(EntityStatus.Waiting);
             for (int i = 0; i < list.Count; i++)
             {
-                string oldLink = list[i].OldLink;
-                //使用默认浏览器（IE）打开指定地址
-                JoinTalkWebPage jtPage = new JoinTalkWebPage();
-                jtPage.LaunchUrl(new System.Uri(oldLink));
-                //点击“加入多人聊天”按钮
-                jtPage.JoinTalkDoc.BtnJoinTalk.WaitForControlExist();
-                Mouse.Click(jtPage.JoinTalkDoc.BtnJoinTalk);
-                //关闭浏览器
-                jtPage.Close();
-                jtPage.WaitForControlNotExist();
+                DiscussGroupLink link = list[i];
 
-                //获取聊天对话框
-                QQTalkWindow window = new QQTalkWindow();
-                //获取工具条按钮
-                WinSplitButton btnJoinTalk = window.TalkToolBar.BtnJoinTalk;
-                //点击“邀请加入多人聊天”
-                Mouse.Click(btnJoinTalk);
-
-                //获取弹出窗口
-                JoinTalkWindow jtWin = new JoinTalkWindow();
-                //等待弹出窗口显示完毕
-                jtWin.JoinTalkMenu.JoinTalkItem.WaitForControlExist();
-                //点击“复制邀请链接”
-                Mouse.Click(jtWin.JoinTalkMenu.JoinTalkItem);
-                Thread.Sleep(1000);
-
-                //从黏贴板中读取新邀请链接
-                string newLink = Clipboard.GetText();
-                if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
+                if (link.LinkType == "Z")
                 {
-                    newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
+                    //QQ讨论组
+                    try
+                    {
+                        service.UpdateStatus(link.ID, EntityStatus.Processing, "处理中");
+
+                        string oldLink = link.OldLink;
+                        //使用默认浏览器（IE）打开指定地址
+                        JoinTalkWebPage jtPage = new JoinTalkWebPage();
+                        jtPage.LaunchUrl(new System.Uri(oldLink));
+                        //点击“加入多人聊天”按钮
+                        jtPage.JoinTalkDoc.BtnJoinTalk.WaitForControlExist();
+                        Mouse.Click(jtPage.JoinTalkDoc.BtnJoinTalk);
+                        //关闭浏览器
+                        jtPage.Close();
+                        jtPage.WaitForControlNotExist();
+
+                        //获取聊天对话框
+                        QQTalkWindow window = new QQTalkWindow();
+                        //获取工具条按钮
+                        WinSplitButton btnJoinTalk = window.TalkToolBar.BtnJoinTalk;
+                        //点击“邀请加入多人聊天”
+                        Mouse.Click(btnJoinTalk);
+
+                        //获取弹出窗口
+                        JoinTalkWindow jtWin = new JoinTalkWindow();
+                        //等待弹出窗口显示完毕
+                        jtWin.JoinTalkMenu.JoinTalkItem.WaitForControlExist();
+                        //点击“复制邀请链接”
+                        Mouse.Click(jtWin.JoinTalkMenu.JoinTalkItem);
+                        Thread.Sleep(1000);
+
+                        //从黏贴板中读取新邀请链接
+                        string newLink = Clipboard.GetText();
+                        if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
+                        {
+                            newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
+                        }
+
+                        //关闭讨论组标签
+                        Keyboard.SendKeys(window, KeyboardKeys.ESC);
+
+                        //保存新Url,http://url.cn/5rUmF4D
+                        service.UpdateNewLink(link.ID, newLink);
+                    }
+                    catch (Exception ex)
+                    {
+                        service.UpdateStatus(link.ID, EntityStatus.Fail, ex.Message);
+                    }
                 }
-
-                //关闭讨论组标签
-                Keyboard.SendKeys(window, KeyboardKeys.ESC);
-
-                //保存新Url,http://url.cn/5rUmF4D
-                service.UpdateNewLink(list[i].ID, newLink);
+                else
+                {
+                    //QQ群
+                }
             }
 
         }
@@ -106,14 +125,20 @@ namespace CodedUITestProject1
             ContactInfoService contactInfoService = new ContactInfoService();
             DiscussGroupLinkService linkService = new DiscussGroupLinkService();
 
-            List<ContactInfo> list = contactInfoService.getUnprocessedData();
+            //清空DiscussGroupLink表
+            linkService.DeleleAll();
+            //获取待处理ContactInfo记录
+            List<ContactInfo> list = contactInfoService.getByStatus(EntityStatus.Waiting);
 
             foreach (var info in list)
             {
-                List<string> links1 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQTaoLunZuPattern);
+                //更新:处理中
+                contactInfoService.UpdateStatus(info.ID, EntityStatus.Processing, "处理中");
 
                 List<DiscussGroupLink> links = new List<DiscussGroupLink>();
 
+                //获取原字符串中的讨论组
+                List<string> links1 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQTaoLunZuPattern);
                 links1.ForEach(x =>
                 {
                     if (string.IsNullOrWhiteSpace(x)) return;
@@ -130,7 +155,7 @@ namespace CodedUITestProject1
                     links.Add(link);
                 });
 
-
+                //获取原字符串中的QQ群
                 List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
                 links2.ForEach(x =>
                 {
@@ -139,13 +164,14 @@ namespace CodedUITestProject1
                     {
                         Key = info.Key,
                         OldLink = x,
-                        LinkType = "Z",
+                        LinkType = "Q",
                         Status = EntityStatus.Waiting,
                         NewLink = ""
                     };
                     links.Add(link);
                 });
 
+                //插入数据库
                 linkService.BulkInsert(links);
             }
         }
@@ -154,7 +180,25 @@ namespace CodedUITestProject1
         [Timeout(TestTimeout.Infinite)]
         public void TC03_ReplaceWithNewLink()
         {
+            ContactInfoService contactInfoService = new ContactInfoService();
+            DiscussGroupLinkService linkService = new DiscussGroupLinkService();
 
+            //检查是否所有链接都已替换成功
+            Assert.IsTrue(linkService.checkAllProcessed(),"链接没有完全替换成功");
+
+            List<ContactInfo> list = contactInfoService.getByStatus(EntityStatus.Processing);
+            foreach (var info in list)
+            {
+                string newString = info.OldValue;
+
+                List<DiscussGroupLink> links = linkService.getByKey(info.Key);
+                foreach (var link in links)
+                {
+                    newString = newString.Replace(link.OldLink, link.NewLink);
+                }
+
+                contactInfoService.UpdateNewValue(info.Key, newString);
+            }
         }
 
         #region Additional test attributes
