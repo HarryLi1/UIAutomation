@@ -23,7 +23,8 @@ using CodedUITestProject1.DAO;
 using CodedUITestProject1.Entity;
 using System.Diagnostics;
 using CodedUITestProject1.Util;
-using System.Web;//引用Selenium
+using System.Web;
+using CodedUITestProject1.WinElement.MessageManagement;//引用Selenium
 
 namespace CodedUITestProject1
 {
@@ -231,6 +232,29 @@ namespace CodedUITestProject1
 
                 contactInfoService.UpdateNewValue(info.ID, newString);
             }
+        }
+
+        [TestMethod]
+        public void Test()
+        {
+            MsgManWindow mmw = new MsgManWindow();
+
+            mmw.display(mmw, 0);
+
+            //Thread.Sleep(1000);
+            //Mouse.Click(mmw.MsgManTabs.MultipleTalksTabPage);
+            //Thread.Sleep(1000);
+            //Mouse.Click(mmw.LeftList.MyMultipleTalk);
+            //Thread.Sleep(1000);
+            //Mouse.Click(mmw.LeftList.CancelledTalk);
+            //int i = 0;
+            //while (mmw.MidList.HasNext())
+            //{
+            //    Thread.Sleep(1000);
+            //    Mouse.Click(mmw.MidList.Next());
+
+            //    if (i++ >= 5) break;
+            //}
         }
 
         #region Additional test attributes

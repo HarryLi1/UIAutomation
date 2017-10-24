@@ -82,6 +82,10 @@
     <Compile Include="WebElement\JoinTalkWebDocument.cs" />
     <Compile Include="WinElement\JoinTalkPopup\JoinTalkMenu.cs" />
     <Compile Include="WinElement\JoinTalkPopup\JoinTalkWindow.cs" />
+    <Compile Include="WinElement\MessageManagement\MidList.cs" />
+    <Compile Include="WinElement\MessageManagement\LeftList.cs" />
+    <Compile Include="WinElement\MessageManagement\MsgManTabs.cs" />
+    <Compile Include="WinElement\MessageManagement\MsgManWindow.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkToolBar.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkWindow.cs" />
   </ItemGroup>
