@@ -22,7 +22,8 @@ using CodedUITestProject1.WebElement;
 using CodedUITestProject1.DAO;
 using CodedUITestProject1.Entity;
 using System.Diagnostics;
-using CodedUITestProject1.Util;//引用Selenium
+using CodedUITestProject1.Util;
+using System.Web;//引用Selenium
 
 namespace CodedUITestProject1
 {
@@ -53,66 +54,89 @@ namespace CodedUITestProject1
         [Timeout(TestTimeout.Infinite)]
         public void TC02_RetrieveNewLink()
         {
-            DiscussGroupLinkService service = new DiscussGroupLinkService();
-            List<DiscussGroupLink> list = service.getByStatus(EntityStatus.Waiting);
+            DiscussGroupLinkService linkService = new DiscussGroupLinkService();
+            List<DiscussGroupLink> list = linkService.getByStatus(EntityStatus.Waiting);
+            Console.WriteLine("获得{0}条未处理的DiscussGroupLink", list.Count);
+
             for (int i = 0; i < list.Count; i++)
             {
                 DiscussGroupLink link = list[i];
+                Console.WriteLine("处理DiscussGroupLink, ID={0}", link.ID);
 
-                if (link.LinkType == "Z")
+                try
                 {
-                    //QQ讨论组
-                    try
-                    {
-                        service.UpdateStatus(link.ID, EntityStatus.Processing, "处理中");
+                    linkService.UpdateStatus(link.ID, EntityStatus.Processing, "处理中");
+                    string newLink = "";
 
+                    //QQ讨论组
+                    if (link.LinkType == "Z")
+                    {
                         string oldLink = link.OldLink;
                         //使用默认浏览器（IE）打开指定地址
+                        Console.WriteLine("[{0}] 打开IE浏览器",DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         JoinTalkWebPage jtPage = new JoinTalkWebPage();
                         jtPage.LaunchUrl(new System.Uri(oldLink));
                         //点击“加入多人聊天”按钮
+                        Console.WriteLine("[{0}] 点击“加入多人聊天”按钮", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         jtPage.JoinTalkDoc.BtnJoinTalk.WaitForControlExist();
                         Mouse.Click(jtPage.JoinTalkDoc.BtnJoinTalk);
                         //关闭浏览器
+                        Console.WriteLine("[{0}] 关闭浏览器", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         jtPage.Close();
                         jtPage.WaitForControlNotExist();
 
                         //获取聊天对话框
+                        Console.WriteLine("[{0}] 获取聊天对话框", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         QQTalkWindow window = new QQTalkWindow();
                         //获取工具条按钮
+                        Console.WriteLine("[{0}] 获取工具条按钮", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         WinSplitButton btnJoinTalk = window.TalkToolBar.BtnJoinTalk;
                         //点击“邀请加入多人聊天”
+                        Console.WriteLine("[{0}] 点击“邀请加入多人聊天”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         Mouse.Click(btnJoinTalk);
 
                         //获取弹出窗口
+                        Console.WriteLine("[{0}] 获取弹出窗口", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         JoinTalkWindow jtWin = new JoinTalkWindow();
                         //等待弹出窗口显示完毕
+                        Console.WriteLine("[{0}] 等待弹出窗口显示完毕", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         jtWin.JoinTalkMenu.JoinTalkItem.WaitForControlExist();
                         //点击“复制邀请链接”
+                        Console.WriteLine("[{0}] 点击“复制邀请链接”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         Mouse.Click(jtWin.JoinTalkMenu.JoinTalkItem);
+                        Console.WriteLine("[{0}] 休眠1秒钟", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         Thread.Sleep(1000);
 
                         //从黏贴板中读取新邀请链接
-                        string newLink = Clipboard.GetText();
+                        Console.WriteLine("[{0}] 从黏贴板中读取新邀请链接", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        newLink = Clipboard.GetText();
                         if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
                         {
                             newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
                         }
 
                         //关闭讨论组标签
+                        Console.WriteLine("[{0}] 关闭讨论组标签", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         Keyboard.SendKeys(window, KeyboardKeys.ESC);
-
-                        //保存新Url,http://url.cn/5rUmF4D
-                        service.UpdateNewLink(link.ID, newLink);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        service.UpdateStatus(link.ID, EntityStatus.Fail, ex.Message);
+                        //QQ群
+                    }
+
+                    //保存新Url,http://url.cn/5rUmF4D
+                    if (!string.IsNullOrWhiteSpace(newLink))
+                    {
+                        linkService.UpdateNewLink(link.ID, newLink);
+                    }
+                    else
+                    {
+                        linkService.UpdateStatus(link.ID, EntityStatus.Fail,"获取新链接失败");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    //QQ群
+                    linkService.UpdateStatus(link.ID, EntityStatus.Fail, HttpUtility.UrlEncode(ex.Message));
                 }
             }
 
@@ -129,9 +153,12 @@ namespace CodedUITestProject1
             linkService.DeleleAll();
             //获取待处理ContactInfo记录
             List<ContactInfo> list = contactInfoService.getByStatus(EntityStatus.Waiting);
+            Console.WriteLine("获得{0}条未处理的ContactInfo", list.Count);
 
             foreach (var info in list)
             {
+                Console.WriteLine("处理ContactInfo, ID={0}", info.ID);
+
                 //更新:处理中
                 contactInfoService.UpdateStatus(info.ID, EntityStatus.Processing, "处理中");
 
@@ -149,27 +176,29 @@ namespace CodedUITestProject1
                         OldLink = x,
                         LinkType = "Z",
                         Status = EntityStatus.Waiting,
+                        Message = "待处理",
                         NewLink = ""
                     };
 
                     links.Add(link);
                 });
 
-                //获取原字符串中的QQ群
-                List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
-                links2.ForEach(x =>
-                {
-                    if (string.IsNullOrWhiteSpace(x)) return;
-                    DiscussGroupLink link = new DiscussGroupLink()
-                    {
-                        Key = info.Key,
-                        OldLink = x,
-                        LinkType = "Q",
-                        Status = EntityStatus.Waiting,
-                        NewLink = ""
-                    };
-                    links.Add(link);
-                });
+                ////获取原字符串中的QQ群
+                //List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
+                //links2.ForEach(x =>
+                //{
+                //    if (string.IsNullOrWhiteSpace(x)) return;
+                //    DiscussGroupLink link = new DiscussGroupLink()
+                //    {
+                //        Key = info.Key,
+                //        OldLink = x,
+                //        LinkType = "Q",
+                //        Status = EntityStatus.Waiting,
+                //        Message = "待处理",
+                //        NewLink = ""
+                //    };
+                //    links.Add(link);
+                //});
 
                 //插入数据库
                 linkService.BulkInsert(links);
@@ -184,20 +213,23 @@ namespace CodedUITestProject1
             DiscussGroupLinkService linkService = new DiscussGroupLinkService();
 
             //检查是否所有链接都已替换成功
-            Assert.IsTrue(linkService.checkAllProcessed(),"链接没有完全替换成功");
+            Assert.IsTrue(linkService.checkAllProcessed(), "链接没有完全替换成功");
 
             List<ContactInfo> list = contactInfoService.getByStatus(EntityStatus.Processing);
+            Console.WriteLine("获得{0}条处理中的ContactInfo", list.Count);
+
             foreach (var info in list)
             {
-                string newString = info.OldValue;
+                Console.WriteLine("处理ContactInfo, ID={0}", info.ID);
 
+                string newString = info.OldValue;
                 List<DiscussGroupLink> links = linkService.getByKey(info.Key);
                 foreach (var link in links)
                 {
                     newString = newString.Replace(link.OldLink, link.NewLink);
                 }
 
-                contactInfoService.UpdateNewValue(info.Key, newString);
+                contactInfoService.UpdateNewValue(info.ID, newString);
             }
         }
 

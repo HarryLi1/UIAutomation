@@ -29,6 +29,18 @@ CREATE TABLE `discussgrouplink` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 
+查询Sql：
+SELECT * FROM contactinfo;
+SELECT * FROM discussgrouplink;
+
+获得生产数据TTDConnectProdutctDB的更新语句
+select concat('update jnt_basis_connectvendor set VendorContactInfos = \'', newvalue , '\' where ConnectNo = \'', cast(`key` as char), '\';') as `update sql` from test.contactinfo;
+
+更新Sql:
+update test.contactinfo set status = 'S',Message = '处理成功',ChangeTime = now();
+update test.contactinfo set status = 'W',Message = '待处理',ChangeTime = now();
+update test.discussgrouplink set status = 'W';
+
 //PC-Harry
 string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
 //DST60080

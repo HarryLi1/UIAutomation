@@ -11,6 +11,7 @@ namespace CodedUITestProject1.WinElement
     {
         public JoinTalkWindow()
         {
+            Console.WriteLine("[{0}] JoinTalkWindow()", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             #region Search Criteria
             this.SearchProperties[WinWindow.PropertyNames.Name] = "TXMenuWindow";
             this.SearchProperties[WinWindow.PropertyNames.ClassName] = "TXGuiFoundation";
@@ -21,6 +22,7 @@ namespace CodedUITestProject1.WinElement
         {
             get
             {
+                Console.WriteLine("[{0}] JoinTalkMenu", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 if (this.joinTalkMenu == null)
                 {
                     this.joinTalkMenu = new JoinTalkMenu(this);

@@ -9,28 +9,38 @@ namespace CodedUITestProject1
 {
     public class MysqlHelper
     {
-        private MySqlConnection mysqlcon;
+        private static MySqlConnection mysqlcon = null;
 
-        public MysqlHelper()
+        private static MySqlConnection GetMySqlConn
         {
-            string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
-            //string M_str_sqlcon = "server=localhost;user id=root;password=123456;database=test";
-            mysqlcon = new MySqlConnection(M_str_sqlcon);
-            mysqlcon.Open();
+            get
+            {
+                if (mysqlcon == null)
+                {
+                    //string M_str_sqlcon = "server=localhost;user id=root;password=P@ssw0rd!;database=testdb";
+                    string M_str_sqlcon = "server=localhost;user id=root;password=123456;database=test";
+                    mysqlcon = new MySqlConnection(M_str_sqlcon);
+                }
+
+                if (mysqlcon.State == ConnectionState.Closed)
+                    mysqlcon.Open();
+
+                return mysqlcon;
+            }
         }
 
-        public void execute(string sql)
+        public static void execute(string sql)
         {
-            MySqlCommand mysqlcom = new MySqlCommand(sql, mysqlcon);
+            MySqlCommand mysqlcom = new MySqlCommand(sql, GetMySqlConn);
             mysqlcom.ExecuteNonQuery();
-            mysqlcom.Dispose();
+            //mysqlcom.Dispose();
 
         }
 
-        public MySqlDataReader query(string sql)
+        public static MySqlDataReader query(string sql)
         {
-            MySqlCommand mysqlcom = new MySqlCommand(sql, mysqlcon);
-            MySqlDataReader mysqlread = mysqlcom.ExecuteReader(CommandBehavior.CloseConnection);
+            MySqlCommand mysqlcom = new MySqlCommand(sql, GetMySqlConn);
+            MySqlDataReader mysqlread = mysqlcom.ExecuteReader();
             return mysqlread;
         }
 

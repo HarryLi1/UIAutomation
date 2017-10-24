@@ -12,6 +12,7 @@ namespace CodedUITestProject1.WinElement.JoinTalkPopup
         public JoinTalkMenu(UITestControl container)
             : base(container)
         {
+            Console.WriteLine("[{0}] JoinTalkMenu()", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             #region Search Criteria
             this.SearchProperties[WinMenu.PropertyNames.Name] = "TXMenuWindow";
             #endregion
@@ -21,6 +22,8 @@ namespace CodedUITestProject1.WinElement.JoinTalkPopup
         {
             get
             {
+                Console.WriteLine("[{0}] JoinTalkItem start", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
                 if (this.joinTalkItem == null)
                 {
                     this.joinTalkItem = new WinMenuItem(this);
@@ -29,11 +32,10 @@ namespace CodedUITestProject1.WinElement.JoinTalkPopup
                     this.joinTalkItem.SearchProperties[WinMenuItem.PropertyNames.Name] = "复制邀请链接";
                     #endregion
                 }
+                Console.WriteLine("[{0}] JoinTalkItem end", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 return this.joinTalkItem;
             }
-
-
         }
         private WinMenuItem joinTalkItem;
     }

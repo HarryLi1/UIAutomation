@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WebDriver">
       <HintPath>..\packages\Selenium.WebDriver.3.6.0\lib\net40\WebDriver.dll</HintPath>
