@@ -28,6 +28,19 @@ CREATE TABLE `discussgrouplink` (
   UNIQUE KEY `ID_UNIQUE` (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `origionlink` (
+  `ID` bigint(10) NOT NULL AUTO_INCREMENT,
+  `QQOwner` varchar(45) NOT NULL COMMENT 'QQ拥有者',
+  `RetrieveDate` datetime NOT NULL COMMENT '获取日期',
+  `Type` varchar(10) NOT NULL DEFAULT 'Z' COMMENT '类型。Z:讨论组；Q：QQ群',
+  `Name` varchar(1000) NOT NULL COMMENT '讨论组或QQ群等的名字',
+  `JoinLink` varchar(200) NOT NULL COMMENT '邀请链接',
+  `CreateTime` datetime NOT NULL COMMENT '创建时间',
+  `ChangeTime` datetime NOT NULL COMMENT '更改时间',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2047 DEFAULT CHARSET=utf8 COMMENT='原始邀请链接';
+
+
 
 查询Sql：
 SELECT * FROM contactinfo;

@@ -11,6 +11,7 @@ namespace CodedUITestProject1.DAO
     {
         public const string GetByStatusSql = "SELECT * FROM discussgrouplink where Status = '{0}'";
         public const string UpdateNewLinkSql = "update discussgrouplink set NewLink = '{0}', Status = '" + EntityStatus.Success + "',Message = '处理成功',ChangeTime = now() where id = {1}";
+        public const string UpdateOldLinkSql = "update discussgrouplink set OldLink = '{0}',ChangeTime = now() where id = {1}";
         public const string UpdateNewStatusSql = "update discussgrouplink set Status = '{0}', Message='{1}',ChangeTime = now() where id = {2}";
         public const string DeleteAllSql = "delete from discussgrouplink";
         public const string InsertSql = "insert into discussgrouplink(`Key`, OldLink, NewLink, LinkType, Status, Message, CreateTime, ChangeTime ) values({0},'{1}','{2}','{3}','{4}','{5}',now(),now())";
@@ -27,6 +28,11 @@ namespace CodedUITestProject1.DAO
         public void UpdateNewLink(long id, string newLink)
         {
             MysqlHelper.execute(string.Format(DiscussGroupLinkService.UpdateNewLinkSql, newLink, id));
+        }
+
+        public void UpdateOldLink(long id, string oldLink)
+        {
+            MysqlHelper.execute(string.Format(DiscussGroupLinkService.UpdateOldLinkSql, oldLink, id));
         }
 
         public void UpdateStatus(long id, string newStatus, string message)
@@ -46,6 +52,11 @@ namespace CodedUITestProject1.DAO
                     item.Status ?? "",
                     item.Message ?? ""));
             }
+        }
+
+        public void Insert(DiscussGroupLink item)
+        {
+            BulkInsert(new List<DiscussGroupLink>(new DiscussGroupLink[] { item }));
         }
 
         public void DeleleAll()
@@ -75,7 +86,7 @@ namespace CodedUITestProject1.DAO
                 dr.Close();
                 dr.Dispose();
             }
-           
+
             return false;
         }
 

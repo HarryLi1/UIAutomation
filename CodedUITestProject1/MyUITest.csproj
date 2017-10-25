@@ -71,8 +71,10 @@
     <Compile Include="CodedUITest1.cs" />
     <Compile Include="Common\KeyboardKeys.cs" />
     <Compile Include="Entity\ContactInfo.cs" />
+    <Compile Include="Entity\OrigionLink.cs" />
     <Compile Include="Entity\EntityStatus.cs" />
     <Compile Include="Service\ContactInfoService.cs" />
+    <Compile Include="Service\OrigionLinkService.cs" />
     <Compile Include="Service\DiscussGroupLinkService.cs" />
     <Compile Include="Entity\DiscussGroupLink.cs" />
     <Compile Include="Service\MysqlHelper.cs" />

@@ -7,6 +7,10 @@ namespace CodedUITestProject1.Common
 {
     public class KeyboardKeys
     {
-        public const string ESC = "{ESC}";
+        public const string ESC = "{Esc}";
+
+        public const string DOWN = "{Down}";
+
+        public const string ENTER = "{Enter}";
     }
 }

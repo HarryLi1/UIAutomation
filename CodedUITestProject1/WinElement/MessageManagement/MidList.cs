@@ -13,7 +13,6 @@ namespace CodedUITestProject1.WinElement.MessageManagement
         public MidList(UITestControl container)
             : base(container)
         {
-            this.SearchConfigurations.Add(SearchConfiguration.DisambiguateChild);
         }
 
         public WinListItem Next()

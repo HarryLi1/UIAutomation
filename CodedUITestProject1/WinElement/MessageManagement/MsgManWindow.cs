@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UITesting;
+﻿using Microsoft.VisualStudio.TestTools.UITest.Extension;
+using Microsoft.VisualStudio.TestTools.UITesting;
 using Microsoft.VisualStudio.TestTools.UITesting.WinControls;
 using System;
 using System.Collections.Generic;
@@ -18,15 +19,18 @@ namespace CodedUITestProject1.WinElement.MessageManagement
             #endregion
         }
 
-        public void display(UITestControl control, int level)
+        public void display(UITestControl control, int level, int index)
         {
-            if (level >= 8) return;
-            Console.WriteLine(new string(' ', level * 2) +  control.GetType().FullName);
-            Console.WriteLine(new string(' ', level * 2) + "Has child:" + control.GetChildren().Count);
+            int spaceCount = level * 4;
+            if (level >= 10) return;
+            Console.WriteLine(new string(' ', spaceCount) + index + ":" + control.GetType().FullName);
+            Console.WriteLine(new string(' ', spaceCount) + index + ":" + "Name:" + control.Name + "; ClassName:" + control.ClassName + "; ControlType:" + control.ControlType + "; WindowTitles:" + control.WindowTitles);
+            Console.WriteLine(new string(' ', spaceCount) + index + ":" + "Has child:" + control.GetChildren().Count);
 
+            int i = 0;
             foreach (var child in control.GetChildren())
             {
-                display(child, level + 1);
+                display(child, level + 1, ++i);
             }
 
         }
@@ -57,21 +61,38 @@ namespace CodedUITestProject1.WinElement.MessageManagement
             }
         }
 
-        public MidList MidList
+        public WinList MidList
         {
             get
             {
                 if (this.midList == null)
                 {
-                    this.midList = new MidList(this);
+
+                    this.midList = (WinList)this.GetChildren()[3].GetChildren()[1].GetChildren()[0].GetChildren()[1].GetChildren()[0].GetChildren()[1].GetChildren()[0];
                 }
-                
+
                 return this.midList;
             }
         }
 
+        public bool HasNext(WinList list, int index)
+        {
+            return index < list.GetChildren().Count - 1;
+        }
+
+        public WinListItem Next(WinList list, int index)
+        {
+            return (WinListItem)list.GetChildren()[index];
+        }
+
+        public void ScrolToTop(WinList list)
+        {
+            WinScrollBar bar = new WinScrollBar(list);
+            Mouse.MoveScrollWheel(bar, 3);
+        }
+
         private MsgManTabs msgManTabs;
         private LeftList leftList;
-        private MidList midList;
+        private WinList midList;
     }
 }

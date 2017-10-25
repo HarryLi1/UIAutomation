@@ -31,6 +31,7 @@ namespace CodedUITestProject1
 
         public static void execute(string sql)
         {
+            Console.WriteLine(sql);
             MySqlCommand mysqlcom = new MySqlCommand(sql, GetMySqlConn);
             mysqlcom.ExecuteNonQuery();
             //mysqlcom.Dispose();
@@ -39,6 +40,7 @@ namespace CodedUITestProject1
 
         public static MySqlDataReader query(string sql)
         {
+            Console.WriteLine(sql);
             MySqlCommand mysqlcom = new MySqlCommand(sql, GetMySqlConn);
             MySqlDataReader mysqlread = mysqlcom.ExecuteReader();
             return mysqlread;

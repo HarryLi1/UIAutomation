@@ -74,7 +74,7 @@ namespace CodedUITestProject1
                     {
                         string oldLink = link.OldLink;
                         //使用默认浏览器（IE）打开指定地址
-                        Console.WriteLine("[{0}] 打开IE浏览器",DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        Console.WriteLine("[{0}] 打开IE浏览器", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         JoinTalkWebPage jtPage = new JoinTalkWebPage();
                         jtPage.LaunchUrl(new System.Uri(oldLink));
                         //点击“加入多人聊天”按钮
@@ -132,7 +132,7 @@ namespace CodedUITestProject1
                     }
                     else
                     {
-                        linkService.UpdateStatus(link.ID, EntityStatus.Fail,"获取新链接失败");
+                        linkService.UpdateStatus(link.ID, EntityStatus.Fail, "获取新链接失败");
                     }
                 }
                 catch (Exception ex)
@@ -235,26 +235,91 @@ namespace CodedUITestProject1
         }
 
         [TestMethod]
-        public void Test()
+        [Timeout(TestTimeout.Infinite)]
+        public void TC04_GetQQTaoLunZuList()
         {
+            OrigionLinkService olService = new OrigionLinkService();
+
             MsgManWindow mmw = new MsgManWindow();
 
-            mmw.display(mmw, 0);
+            Mouse.Click(mmw.MsgManTabs.MultipleTalksTabPage);
+            Mouse.Click(mmw.LeftList.MyMultipleTalk);
 
-            //Thread.Sleep(1000);
-            //Mouse.Click(mmw.MsgManTabs.MultipleTalksTabPage);
-            //Thread.Sleep(1000);
-            //Mouse.Click(mmw.LeftList.MyMultipleTalk);
-            //Thread.Sleep(1000);
-            //Mouse.Click(mmw.LeftList.CancelledTalk);
-            //int i = 0;
-            //while (mmw.MidList.HasNext())
-            //{
-            //    Thread.Sleep(1000);
-            //    Mouse.Click(mmw.MidList.Next());
+            WinListItem last = null;
+            int i = 0;
+            while (mmw.HasNext(mmw.MidList, i))
+            {
 
-            //    if (i++ >= 5) break;
-            //}
+                if (last != null)
+                {
+                    Mouse.Click(last);
+                    Keyboard.SendKeys(KeyboardKeys.DOWN);
+                }
+
+                WinListItem item = mmw.Next(mmw.MidList, i);
+                Mouse.DoubleClick(item);
+
+                #region
+                //获取聊天对话框
+                Console.WriteLine("[{0}] 获取聊天对话框", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                QQTalkWindow window = new QQTalkWindow();
+                //获取工具条按钮
+                Console.WriteLine("[{0}] 获取工具条按钮", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                WinSplitButton btnJoinTalk = window.TalkToolBar.BtnJoinTalk;
+                //点击“邀请加入多人聊天”
+                Console.WriteLine("[{0}] 点击“邀请加入多人聊天”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                Mouse.Click(btnJoinTalk);
+
+                //获取弹出窗口
+                Console.WriteLine("[{0}] 获取弹出窗口", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                JoinTalkWindow jtWin = new JoinTalkWindow();
+                //等待弹出窗口显示完毕
+                Console.WriteLine("[{0}] 等待弹出窗口显示完毕", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                jtWin.JoinTalkMenu.JoinTalkItem.WaitForControlExist();
+                //点击“复制邀请链接”
+                Console.WriteLine("[{0}] 点击“复制邀请链接”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                //Mouse.Click(jtWin.JoinTalkMenu.JoinTalkItem);
+                Keyboard.SendKeys(KeyboardKeys.DOWN);
+                Keyboard.SendKeys(KeyboardKeys.DOWN);
+                Keyboard.SendKeys(KeyboardKeys.ENTER);
+                Console.WriteLine("[{0}] 休眠1秒钟", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                Thread.Sleep(1000);
+
+                //从黏贴板中读取新邀请链接
+                Console.WriteLine("[{0}] 从黏贴板中读取新邀请链接", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                string newLink = Clipboard.GetText();
+                if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
+                {
+                    newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
+                }
+
+                //关闭讨论组标签
+                Console.WriteLine("[{0}] 关闭讨论组标签", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                Keyboard.SendKeys(window, KeyboardKeys.ESC);
+                #endregion
+
+                OrigionLink link = new OrigionLink()
+                {
+                    QQOwner = "",
+                    RetrieveDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                    Type = "Z",
+                    Name = item.Name.Substring(0, 1000),
+                    JoinLink = newLink
+                };
+
+                try
+                {
+                    olService.Insert(link);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(link.ToString());
+                    Console.WriteLine(ex.Message);
+                }
+
+                last = item;
+                //if (++i >= 595) break;
+            }
         }
 
         #region Additional test attributes
