@@ -43,6 +43,10 @@
     <Reference Include="MySql.Data">
       <HintPath>..\Framework\Mysql\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Selenium.WebDriverBackedSelenium">
       <HintPath>..\packages\Selenium.WebDriverBackedSelenium.3.6.0\lib\net40\Selenium.WebDriverBackedSelenium.dll</HintPath>
     </Reference>
@@ -53,6 +57,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="WebDriver">
       <HintPath>..\packages\Selenium.WebDriver.3.6.0\lib\net40\WebDriver.dll</HintPath>
@@ -70,14 +75,22 @@
   <ItemGroup>
     <Compile Include="CodedUITest1.cs" />
     <Compile Include="Common\KeyboardKeys.cs" />
+    <Compile Include="Common\HttpHelper.cs" />
     <Compile Include="Entity\ContactInfo.cs" />
     <Compile Include="Entity\OrigionLink.cs" />
     <Compile Include="Entity\EntityStatus.cs" />
+    <Compile Include="ETLReport\Case\ETLReportUnitTest1.cs" />
+    <Compile Include="ETLReport\Entity\InterfaceInfoNode.cs" />
+    <Compile Include="ETLReport\Entity\NewReport.cs" />
+    <Compile Include="ETLReport\Entity\OldReport.cs" />
+    <Compile Include="ETLReport\Entity\CaseInfoNode.cs" />
+    <Compile Include="ETLReport\Service\NewReportService.cs" />
+    <Compile Include="ETLReport\Service\OldReportService.cs" />
     <Compile Include="Service\ContactInfoService.cs" />
     <Compile Include="Service\OrigionLinkService.cs" />
     <Compile Include="Service\DiscussGroupLinkService.cs" />
     <Compile Include="Entity\DiscussGroupLink.cs" />
-    <Compile Include="Service\MysqlHelper.cs" />
+    <Compile Include="Common\MysqlHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\RegexUtil.cs" />
     <Compile Include="WebElement\JoinTalkWebPage.cs" />
@@ -88,6 +101,7 @@
     <Compile Include="WinElement\MessageManagement\LeftList.cs" />
     <Compile Include="WinElement\MessageManagement\MsgManTabs.cs" />
     <Compile Include="WinElement\MessageManagement\MsgManWindow.cs" />
+    <Compile Include="WinElement\QQTalk\QQInput.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkToolBar.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkWindow.cs" />
   </ItemGroup>
@@ -97,6 +111,7 @@
   <ItemGroup>
     <None Include="Sql\DiscussGroupLinkTable.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

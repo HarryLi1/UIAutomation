@@ -30,7 +30,21 @@ namespace StudyUITtest.WinElement
             }
         }
 
+        public QQInput Input
+        {
+            get
+            {
+                if (this.input == null)
+                {
+                    this.input = new QQInput(this);
+                }
+
+                return this.input;
+            }
+        }
+
         private QQTalkToolBar talkToolBar;
+        private QQInput input;
 
     }
 }

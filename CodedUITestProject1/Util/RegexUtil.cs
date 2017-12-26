@@ -11,16 +11,25 @@ namespace CodedUITestProject1.Util
         public const string QQTaoLunZuPattern = "http://url.cn/[^\"]*";
         public const string QQQunPattern = "https://jq.qq.com/[^\"]*";
 
+        public const string GetReportTimePattern = "<small class=\"smaller-20\"> 报告时间：\\s*([0-9- :]*)</small>";
+        public const string GetInterfaceProcessInfoPattern = "<div class=\"infobox-data\">\\s*<div class=\"infobox-content\">\\s*(.*)\\s*</div>\\s*<div class=\"infobox-content\">(.*)</div>\\s*</div>";
+        public const string GetCaseInfoPattern = "<tr>\\s*<td>(\\d*)</td><td>(.*)</td><td>\\s*(.*)\\s*</td><td><span class=\"label label-success\">\\s*(.*)\\s*</span></td>\\s*</tr>";
+
         public static List<String> getMatchedStrings(string subject, string pattern)
         {
             List<string> result = new List<string>();
             try
             {
-                var groups = Regex.Match(subject, pattern).Groups;
-                for (int i = 0; i < groups.Count; i++)
+                Match matchResult = Regex.Match(subject, pattern, RegexOptions.Multiline);
+                
+                while (matchResult.Success)
                 {
-                    result.Add(groups[i].Value);
-                }
+                    for (int i = 0; i < matchResult.Groups.Count; i++)
+                    {
+                        result.Add(matchResult.Groups[i].Value);
+                    }
+                    matchResult = matchResult.NextMatch();
+                } 
             }
             catch (ArgumentException ex)
             {

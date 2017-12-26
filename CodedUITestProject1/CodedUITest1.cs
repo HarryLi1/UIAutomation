@@ -73,6 +73,7 @@ namespace CodedUITestProject1
                     if (link.LinkType == "Z")
                     {
                         string oldLink = link.OldLink;
+
                         //使用默认浏览器（IE）打开指定地址
                         Console.WriteLine("[{0}] 打开IE浏览器", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         JoinTalkWebPage jtPage = new JoinTalkWebPage();
@@ -116,6 +117,9 @@ namespace CodedUITestProject1
                             newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
                         }
 
+                        //Keyboard.SendKeys(window.Input, ":) just for holding this group. sorry to bother.");
+                        //Keyboard.SendKeys(window.Input, KeyboardKeys.ENTER);
+
                         //关闭讨论组标签
                         Console.WriteLine("[{0}] 关闭讨论组标签", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                         Keyboard.SendKeys(window, KeyboardKeys.ESC);
@@ -134,11 +138,14 @@ namespace CodedUITestProject1
                     {
                         linkService.UpdateStatus(link.ID, EntityStatus.Fail, "获取新链接失败");
                     }
+              
                 }
                 catch (Exception ex)
                 {
                     linkService.UpdateStatus(link.ID, EntityStatus.Fail, HttpUtility.UrlEncode(ex.Message));
                 }
+
+                //break;
             }
 
         }
@@ -185,21 +192,21 @@ namespace CodedUITestProject1
                 });
 
                 ////获取原字符串中的QQ群
-                //List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
-                //links2.ForEach(x =>
-                //{
-                //    if (string.IsNullOrWhiteSpace(x)) return;
-                //    DiscussGroupLink link = new DiscussGroupLink()
-                //    {
-                //        Key = info.Key,
-                //        OldLink = x,
-                //        LinkType = "Q",
-                //        Status = EntityStatus.Waiting,
-                //        Message = "待处理",
-                //        NewLink = ""
-                //    };
-                //    links.Add(link);
-                //});
+                List<string> links2 = RegexUtil.getMatchedStrings(info.OldValue, RegexUtil.QQQunPattern);
+                links2.ForEach(x =>
+                {
+                    if (string.IsNullOrWhiteSpace(x)) return;
+                    DiscussGroupLink link = new DiscussGroupLink()
+                    {
+                        Key = info.Key,
+                        OldLink = x,
+                        LinkType = "Q",
+                        Status = EntityStatus.Waiting,
+                        Message = "待处理",
+                        NewLink = ""
+                    };
+                    links.Add(link);
+                });
 
                 //插入数据库
                 linkService.BulkInsert(links);

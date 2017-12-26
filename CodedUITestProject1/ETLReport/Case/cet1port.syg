@@ -1,0 +1,62 @@
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CodedUITestProject1.ETLReport.Service;
+using System.Collections.Generic;
+using CodedUITestProject1.ETLReport.Entity;
+using CodedUITestProject1.Entity;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace CodedUITestProject1.ETLReport.Case
+{
+    [TestClass]
+    public class ETLReportUnitTest1
+    {
+        [TestMethod]
+        public void ETL()
+        {
+            OldReportService oldReportService = new OldReportService();
+            NewReportService newReportService = new NewReportService();
+
+            List<OldReport> list = oldReportService.getByStatus(EntityStatus.Waiting);
+            Console.WriteLine("获得{0}条处理中的OldReport", list.Count);
+
+            foreach (var info in list)
+            {
+                Console.WriteLine("处理OldReport, ID={0}", info.ID);
+
+
+                parseNewReport(info);
+                //newReportService.Insert(new NewReport()
+                //{
+                //    VendorId = info.VendorId,
+                //    CaseInfo = "",
+                //    InterfaceProcessInfo = ""
+                //});
+            }
+        }
+
+        private NewReport parseNewReport(OldReport info)
+        {
+            NewReport newReport = new NewReport()
+            {
+                VendorId = info.VendorId
+            };
+
+            //get all old report urls
+            JArray reports  = JArray.Parse(info.OldReportInfo);
+            foreach (var report in reports)
+            {
+                string noticeMessage = report.SelectToken("noticeMessage");
+                string reportUrl = report.SelectToken("reportUrl");
+                string time = report.SelectToken("time");
+
+                //call and get old report content
+
+
+            }
+
+            return newReport;
+        }
+    }
+}
