@@ -24,7 +24,8 @@ using CodedUITestProject1.Entity;
 using System.Diagnostics;
 using CodedUITestProject1.Util;
 using System.Web;
-using CodedUITestProject1.WinElement.MessageManagement;//引用Selenium
+using CodedUITestProject1.WinElement.MessageManagement;
+using System.IO;//引用Selenium
 
 namespace CodedUITestProject1
 {
@@ -53,16 +54,22 @@ namespace CodedUITestProject1
 
         [TestMethod]
         [Timeout(TestTimeout.Infinite)]
+        [DeploymentItem(".\\files\\ShowNotify.exe", ".\\files")]
         public void TC02_RetrieveNewLink()
         {
             DiscussGroupLinkService linkService = new DiscussGroupLinkService();
             List<DiscussGroupLink> list = linkService.getByStatus(EntityStatus.Waiting);
             Console.WriteLine("获得{0}条未处理的DiscussGroupLink", list.Count);
 
-            for (int i = 0; i < list.Count; i++)
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
             {
                 DiscussGroupLink link = list[i];
                 Console.WriteLine("处理DiscussGroupLink, ID={0}", link.ID);
+
+                string root = (new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)).Directory.FullName;
+                string exeFile = root + "\\files\\ShowNotify.exe";
+                Process.Start(exeFile, "1000 " + string.Format("正在处理：{0}/{1}", i, count));
 
                 try
                 {
@@ -138,7 +145,7 @@ namespace CodedUITestProject1
                     {
                         linkService.UpdateStatus(link.ID, EntityStatus.Fail, "获取新链接失败");
                     }
-              
+
                 }
                 catch (Exception ex)
                 {

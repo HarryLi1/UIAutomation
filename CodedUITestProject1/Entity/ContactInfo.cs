@@ -8,7 +8,7 @@ namespace CodedUITestProject1.Entity
     public class ContactInfo
     {
         public long ID;
-        public long Key;
+        public string Key;
         public string OldValue;
         public string NewValue;
         public int CategoryID;

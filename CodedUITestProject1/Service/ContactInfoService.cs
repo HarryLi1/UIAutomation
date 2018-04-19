@@ -13,7 +13,7 @@ namespace CodedUITestProject1.DAO
         public const string GetByStatusSql = "SELECT * FROM contactinfo where Status = '{0}'";
         public const string UpdateNewValueSql = "update contactinfo set NewValue = '{0}', Status = '" + EntityStatus.Success + "', Message = '处理成功', ChangeTime = now() where id = {1}";
         public const string UpdateNewStatusSql = "update contactinfo set Status = '{0}', Message='{1}',ChangeTime=now() where id = {2}";
-        public const string InsertSql = "insert into contactinfo(`Key`, OldValue, NewValue, CategoryID, Status, Message, CreateTime, ChangeTime ) values({0},'{1}','{2}',{3},'{4}','{5}',now(),now())";
+        public const string InsertSql = "insert into contactinfo(`Key`, OldValue, NewValue, CategoryID, Status, Message, CreateTime, ChangeTime ) values('{0}','{1}','{2}',{3},'{4}','{5}',now(),now())";
 
         public List<ContactInfo> getByStatus(String status)
         {
@@ -54,7 +54,7 @@ namespace CodedUITestProject1.DAO
             {
                 ContactInfo entity = new ContactInfo();
                 entity.ID = dr.GetInt64("ID");
-                entity.Key = dr.GetInt64("Key");
+                entity.Key = dr.GetString("Key");
                 entity.OldValue = dr.GetString("OldValue");
                 entity.NewValue = dr.GetString("NewValue") ?? "";
                 entity.CategoryID = dr.GetInt16("CategoryID");

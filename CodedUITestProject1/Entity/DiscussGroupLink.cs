@@ -8,7 +8,7 @@ namespace CodedUITestProject1.Entity
     public class DiscussGroupLink
     {
         public long ID;
-        public long Key;
+        public string Key;
         public string OldLink;
         public string NewLink;
         public string LinkType;

@@ -14,8 +14,8 @@ namespace CodedUITestProject1.DAO
         public const string UpdateOldLinkSql = "update discussgrouplink set OldLink = '{0}',ChangeTime = now() where id = {1}";
         public const string UpdateNewStatusSql = "update discussgrouplink set Status = '{0}', Message='{1}',ChangeTime = now() where id = {2}";
         public const string DeleteAllSql = "delete from discussgrouplink";
-        public const string InsertSql = "insert into discussgrouplink(`Key`, OldLink, NewLink, LinkType, Status, Message, CreateTime, ChangeTime ) values({0},'{1}','{2}','{3}','{4}','{5}',now(),now())";
-        public const string GetByKeySql = "select * from discussgrouplink where `Key`={0}";
+        public const string InsertSql = "insert into discussgrouplink(`Key`, OldLink, NewLink, LinkType, Status, Message, CreateTime, ChangeTime ) values('{0}','{1}','{2}','{3}','{4}','{5}',now(),now())";
+        public const string GetByKeySql = "select * from discussgrouplink where `Key`='{0}'";
         public const string CheckAllProcessedSql = "select count(1) from discussgrouplink where status <> '" + EntityStatus.Success + "'";
 
         public List<DiscussGroupLink> getByStatus(String status)
@@ -64,7 +64,7 @@ namespace CodedUITestProject1.DAO
             MysqlHelper.execute(string.Format(DiscussGroupLinkService.DeleteAllSql));
         }
 
-        public List<DiscussGroupLink> getByKey(long key)
+        public List<DiscussGroupLink> getByKey(string key)
         {
             List<DiscussGroupLink> results = new List<DiscussGroupLink>();
             MySqlDataReader dr = MysqlHelper.query(string.Format(DiscussGroupLinkService.GetByKeySql, key));
@@ -99,7 +99,7 @@ namespace CodedUITestProject1.DAO
                 {
                     DiscussGroupLink entity = new DiscussGroupLink();
                     entity.ID = dr.GetInt64("ID");
-                    entity.Key = dr.GetInt64("Key");
+                    entity.Key = dr.GetString("Key");
                     entity.OldLink = dr.GetString("OldLink");
                     entity.NewLink = dr.GetString("NewLink") ?? "";
                     entity.LinkType = dr.GetString("LinkType");
