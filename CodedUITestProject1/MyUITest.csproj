@@ -42,6 +42,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevExpress.CodedUIExtension.VS12.v16.1, Version=16.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data">
       <HintPath>..\Framework\Mysql\MySql.Data.dll</HintPath>
@@ -84,6 +85,7 @@
     <Compile Include="Entity\OrigionLink.cs" />
     <Compile Include="Entity\EntityStatus.cs" />
     <Compile Include="ETLReport\Case\ETLReportUnitTest1.cs" />
+    <Compile Include="ETLReport\Case\UnitTest1.cs" />
     <Compile Include="ETLReport\Entity\InterfaceInfoNode.cs" />
     <Compile Include="ETLReport\Entity\NewReport.cs" />
     <Compile Include="ETLReport\Entity\OldReport.cs" />
@@ -105,6 +107,8 @@
     <Compile Include="WinElement\MessageManagement\LeftList.cs" />
     <Compile Include="WinElement\MessageManagement\MsgManTabs.cs" />
     <Compile Include="WinElement\MessageManagement\MsgManWindow.cs" />
+    <Compile Include="WinElement\QQTalk2\QQTalkWindow2.cs" />
+    <Compile Include="WinElement\QQTalk2\UIMenu.cs" />
     <Compile Include="WinElement\QQTalk\QQInput.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkToolBar.cs" />
     <Compile Include="WinElement\QQTalk\QQTalkWindow.cs" />

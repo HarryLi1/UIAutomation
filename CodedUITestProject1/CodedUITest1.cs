@@ -26,6 +26,7 @@ using CodedUITestProject1.Util;
 using System.Web;
 using CodedUITestProject1.WinElement.MessageManagement;
 using System.IO;//引用Selenium
+using System.Linq;
 
 namespace CodedUITestProject1
 {
@@ -69,7 +70,7 @@ namespace CodedUITestProject1
 
                 string root = (new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)).Directory.FullName;
                 string exeFile = root + "\\files\\ShowNotify.exe";
-                Process.Start(exeFile, "1000 " + string.Format("正在处理：{0}/{1}", i, count));
+                Process.Start(exeFile, "2000 " + string.Format("正在处理：{0}/{1}", i, count));
 
                 try
                 {
@@ -159,6 +160,117 @@ namespace CodedUITestProject1
 
         [TestMethod]
         [Timeout(TestTimeout.Infinite)]
+        [DeploymentItem(".\\files\\ShowNotify.exe", ".\\files")]
+        public void TC02_RetrieveNewLink2()
+        {
+            DiscussGroupLinkService linkService = new DiscussGroupLinkService();
+            List<DiscussGroupLink> list = linkService.getByStatus(EntityStatus.Waiting);
+            Console.WriteLine("获得{0}条未处理的DiscussGroupLink", list.Count);
+
+            int count = list.Count;
+            for (int i = 0; i < count; i++)
+            {
+                DiscussGroupLink link = list[i];
+                Console.WriteLine("处理DiscussGroupLink, ID={0}", link.ID);
+
+                string root = (new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location)).Directory.FullName;
+                string exeFile = root + "\\files\\ShowNotify.exe";
+                Process.Start(exeFile, "2000 " + string.Format("正在处理：{0}/{1}", i, count));
+
+                try
+                {
+                    linkService.UpdateStatus(link.ID, EntityStatus.Processing, "处理中");
+                    string newLink = "";
+
+                    //QQ讨论组
+                    if (link.LinkType == "Z")
+                    {
+                        string oldLink = link.OldLink;
+
+                        //使用默认浏览器（IE）打开指定地址
+                        Console.WriteLine("[{0}] 打开IE浏览器", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        JoinTalkWebPage jtPage = new JoinTalkWebPage();
+                        jtPage.LaunchUrl(new System.Uri(oldLink));
+                        //点击“加入多人聊天”按钮
+                        Console.WriteLine("[{0}] 点击“加入多人聊天”按钮", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        jtPage.JoinTalkDoc.BtnJoinTalk.WaitForControlExist();
+                        Mouse.Click(jtPage.JoinTalkDoc.BtnJoinTalk);
+                        //关闭浏览器
+                        Console.WriteLine("[{0}] 关闭浏览器", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        jtPage.Close();
+                        //jtPage.WaitForControlNotExist();
+
+                        //获取聊天对话框
+                        Console.WriteLine("[{0}] 获取聊天对话框", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        QQTalkWindow2 window = new QQTalkWindow2();
+                        //获取工具条按钮
+                        Console.WriteLine("[{0}] 获取工具条按钮", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        //WinButton moreInfoButton = window.TalkToolBar.MoreInfoButton;
+                        //点击“邀请加入多人聊天”
+                        Console.WriteLine("[{0}] 点击“邀请加入多人聊天”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        //Mouse.Click(moreInfoButton);
+                        Mouse.Click(new Point(1158, 205));
+                        Thread.Sleep(1000);
+
+                        //获取弹出窗口
+                        Console.WriteLine("[{0}] 获取弹出窗口", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        UIMenuWindow uiMenuWindow = new UIMenuWindow();
+                        //等待弹出窗口显示完毕
+                        Console.WriteLine("[{0}] 等待弹出窗口显示完毕", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        //uiMenuWindow.UIMenu.CopyLinkMenuItem.WaitForControlExist();
+                        Thread.Sleep(100);
+                        //点击“复制邀请链接”
+                        Console.WriteLine("[{0}] 点击“复制邀请链接”", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        //Mouse.Click(uiMenuWindow.UIMenu.CopyLinkMenuItem);
+                        Mouse.Move(new Point(Mouse.Location.X, Mouse.Location.Y + 104));
+                        Mouse.Click();
+                        Console.WriteLine("[{0}] 休眠1秒钟", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        Thread.Sleep(500);
+
+                        //从黏贴板中读取新邀请链接
+                        Console.WriteLine("[{0}] 从黏贴板中读取新邀请链接", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        newLink = Clipboard.GetText();
+                        if (!string.IsNullOrWhiteSpace(newLink) && newLink.StartsWith("点击链接加入多人聊天"))
+                        {
+                            newLink = Clipboard.GetText().Split("\r\n".ToCharArray())[1];
+                        }
+
+                        //Keyboard.SendKeys(window.Input, ":) just for holding this group. sorry to bother.");
+                        //Keyboard.SendKeys(window.Input, KeyboardKeys.ENTER);
+
+                        //关闭讨论组标签
+                        Console.WriteLine("[{0}] 关闭讨论组标签", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                        Keyboard.SendKeys(window, KeyboardKeys.ESC);
+                    }
+                    else
+                    {
+                        //QQ群
+                    }
+
+                    //保存新Url,http://url.cn/5rUmF4D
+                    if (!string.IsNullOrWhiteSpace(newLink))
+                    {
+                        linkService.UpdateNewLink(link.ID, newLink);
+                    }
+                    else
+                    {
+                        linkService.UpdateStatus(link.ID, EntityStatus.Fail, "获取新链接失败");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    linkService.UpdateStatus(link.ID, EntityStatus.Fail, HttpUtility.UrlEncode(ex.Message));
+                }
+
+                //break;
+            }
+
+        }
+
+
+        [TestMethod]
+        [Timeout(TestTimeout.Infinite)]
         public void TC01_BreakDownLinks()
         {
             ContactInfoService contactInfoService = new ContactInfoService();
@@ -241,6 +353,17 @@ namespace CodedUITestProject1
                 List<DiscussGroupLink> links = linkService.getByKey(info.Key);
                 foreach (var link in links)
                 {
+                    //类型是讨论组，但是连接是QQ群，更改类型。
+                    if (link.LinkType == "Z" && RegexUtil.getMatchedCount(link.NewLink, RegexUtil.QQQunPattern) > 0)
+                    {
+                        List<string> httpsList = RegexUtil.getMatchedStrings(newString, RegexUtil.HttpPattern);
+                        int httpCount = httpsList.Count(x => string.Equals(x, "http:", StringComparison.InvariantCultureIgnoreCase));
+                        if (httpCount == 1)
+                        {
+                            newString = newString.Replace("QQ讨论组", "QQ群");
+                        }
+                    }
+
                     newString = newString.Replace(link.OldLink, link.NewLink);
                 }
 

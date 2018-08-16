@@ -64,7 +64,7 @@ string M_str_sqlcon = "server=localhost;user id=root;password=123456;database=te
 select ConnectNo, VendorContactInfos from ttdconnectproductdb.jnt_basis_connectvendor where VendorContactInfos like '%QQ讨论组%' or VendorContactInfos like '%QQ群%';
 
 2. 把上述查询结果，复制到Excel文件“QQ讨论组刷新.xslx”中，并使用公式获取到要插入到Test库中的insert sql语句
-="insert into contactinfo(`Key`, OldValue, NewValue, CategoryID, Status, Message, CreateTime, ChangeTime ) values("&B2&",'"&C2&"','',0,'W','待处理',now(),now());"
+="insert into test.contactinfo(`Key`, OldValue, NewValue, CategoryID, Status, Message, CreateTime, ChangeTime ) values("&B2&",'"&C2&"','',0,'W','待处理',now(),now());"
 
 3. 执行单元测试 TC01_BreakDownLinks
 
@@ -73,7 +73,7 @@ select ConnectNo, VendorContactInfos from ttdconnectproductdb.jnt_basis_connectv
 5. 执行单元测试 TC03_ReplaceWithNewLink
 
 6. 在本地库中执行语句
-select concat('update jnt_basis_connectvendor set VendorContactInfos = \'', newvalue , '\' where ConnectNo = \'', cast(`key` as char), '\';') as `update sql` from contactinfo;
+select concat('update jnt_basis_connectvendor set VendorContactInfos = \'', newvalue , '\' where ConnectNo = \'', cast(`key` as char), '\';') as `update sql` from test.contactinfo;
 
 7. 把上述查询结果，即为要提交给二线的SQL.
 建议备份到Excel文件“QQ讨论组刷新.xslx”的列“更新TTDConnectProductDB”
